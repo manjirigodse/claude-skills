@@ -76,3 +76,15 @@ Add entries with:  /note
 - CLI launcher start-claude.bat sets the same vars itself; left unchanged
 - Gotcha:   token/auth error later -> aws sso login --profile Claude-Code-Bedrock-647088784885, then reload window
 - Reload:   Ctrl+Shift+P -> Developer: Reload Window (extension reads env vars at startup)
+
+================================================================
+[2026-11-18] PERSONAL CLAUDE SKILLS REPO (SYNCED ACROSS DEVICES)
+----------------------------------------------------------------
+- Repo:     github.com/manjirigodse/claude-skills  (PRIVATE)  -> local folder is ~/.claude/skills itself
+- New device: git clone git@github-personal:manjirigodse/claude-skills.git ~/.claude/skills, then restart Claude Code
+- Update:   git -C ~/.claude/skills pull
+- Skill /gh-profiles: work + personal GitHub over SSH. Generates keys, copies .pub to clipboard + opens GitHub add-key page,
+            auto-routes commit name/email per repo (folder, remote alias or org), clone/use/audit/doctor/test. Win + macOS.
+- Skill /note: appends findings to notes/playwright-cheatsheet.txt in this repo; auto pull -> append -> commit -> push on every use
+- Per-device (git-ignored): gh-profiles/profiles.json. Notes merge with union driver (.gitattributes) so two devices never conflict
+- Gotcha:   git hasconfig URL globs are path-aware: use git@alias:*/** and https://github.com/<org>/** (a bare * never crosses '/')

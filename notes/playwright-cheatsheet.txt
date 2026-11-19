@@ -102,3 +102,13 @@ Add entries with:  /note
 - Runtime:  lib/test-healer.ts (test.healme) + lib/bug-radar.hook.ts
 - Tools:    tools/ai-router (Gemini Flash vs Claude Haiku), graphify (PowerEngage), regwatch, blast-radius, pr-review-board
 - Gotcha:   overlapping healers (healer skill, auto-healer, healme); skills/README.md stale (2 of ~25); ai-router model IDs old
+================================================================
+[2026-11-18] AGENTIC ARCHITECTURE - REVISION (layered view + corrections)
+----------------------------------------------------------------
+- Layers:   1 rules (CLAUDE.md, .claude/rules) -> 2 skills/agents (playguar-v2, healer, migration/testrigor swarms) -> 3 MCP (playwright, atlassian, spec-index) -> 4 guards (data-isolation lib, SQL hook, antipattern scan, tsc) -> 5 CI (claude.yml, flaky-fixer, auto-healer) -> 6 observability (Langfuse, regwatch, Hawkeye)
+- Flow:     Jira ticket -> playguar (discover via MCP, codegen, quality gate, heal, 3x run) -> PR; failures -> Hawkeye classify -> healer/auto-healer
+- Fix:      earlier note said skills/README.md lists 2 of ~25 skills; only first 40 lines were read, so treat as (unverified)
+- Fix:      ai-router model IDs (gemini-2.0-flash, claude-haiku-4-5) judged old vs current family - judgement, not tested
+- Fix:      only dir listings + file headers were read; no skill/agent body was reviewed in depth (unverified: phase quality, Xray write-back controls)
+- Gotcha:   healer overlap: .claude/skills/healer vs scripts/auto-healer vs lib/test-healer.ts (healme masks locator drift vs "fail immediately" rule)
+- Gotcha:   agents duplicated in .claude/, .github/, "restricted agents/" - pick one source of truth

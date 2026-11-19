@@ -88,3 +88,17 @@ Add entries with:  /note
 - Skill /note: appends findings to notes/playwright-cheatsheet.txt in this repo; auto pull -> append -> commit -> push on every use
 - Per-device (git-ignored): gh-profiles/profiles.json. Notes merge with union driver (.gitattributes) so two devices never conflict
 - Gotcha:   git hasconfig URL globs are path-aware: use git@alias:*/** and https://github.com/<org>/** (a bare * never crosses '/')
+================================================================
+[2026-11-18] AGENTIC ARCHITECTURE OVERVIEW (qa-automation-playwright)
+----------------------------------------------------------------
+- Same agents defined twice: Claude Code (.claude/) and Copilot (.github/agents, chatmodes, prompts, instructions) - drift risk
+- Rules:    CLAUDE.md + .claude/rules/ (path-scoped guardrails: POM, .or() chains, data isolation, 1Password, Xray)
+- Agents:   .claude/agents (14): hawkeye, testrigor audit, hotfix gap, release sign-off, jira testcase gen, playguar, migration-swarm
+- Skills:   .claude/skills (~25): playguar-v2 (11 phases ticket->PR), healer (11 RCA buckets, 3x validate), selenium-bridge, migration-swarm, testrigor swarm, collision-guard, pr-review-manager-v2
+- MCP:      .mcp.json = playwright (live DOM), atlassian (Jira/Xray), spec-index (custom RAG over specs); aws-mcp fails (no uvx)
+- Hooks:    PreToolUse SQL read-only guard; Langfuse hooks (PostToolUse/Stop) trace + score skills (tools/langfuse)
+- Code guard: lib/data-isolation (enforce mode for agent specs, audit otherwise) - code checks agent output, not just prompts
+- CI:       .github/workflows/claude.yml (claude-code-action on @claude), poweraccred-flaky-fixer.yml (AI fixer), scripts/auto-healer (run/classify/fix/rerun loop)
+- Runtime:  lib/test-healer.ts (test.healme) + lib/bug-radar.hook.ts
+- Tools:    tools/ai-router (Gemini Flash vs Claude Haiku), graphify (PowerEngage), regwatch, blast-radius, pr-review-board
+- Gotcha:   overlapping healers (healer skill, auto-healer, healme); skills/README.md stale (2 of ~25); ai-router model IDs old

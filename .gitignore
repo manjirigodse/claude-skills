@@ -1,0 +1,7 @@
+# Per-device state - never share across machines
+gh-profiles/profiles.json
+*.bak-gh-profiles
+*.log
+node_modules/
+.DS_Store
+Thumbs.db

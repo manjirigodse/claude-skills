@@ -112,3 +112,12 @@ Add entries with:  /note
 - Fix:      only dir listings + file headers were read; no skill/agent body was reviewed in depth (unverified: phase quality, Xray write-back controls)
 - Gotcha:   healer overlap: .claude/skills/healer vs scripts/auto-healer vs lib/test-healer.ts (healme masks locator drift vs "fail immediately" rule)
 - Gotcha:   agents duplicated in .claude/, .github/, "restricted agents/" - pick one source of truth
+================================================================
+[2026-11-18] STATUS REPORT - TODAY
+----------------------------------------------------------------
+- Done:     VS Code Claude Code extension on AWS Bedrock (SSO profile, Sonnet/Haiku 5.5 global ids), verified with aws CLI
+- Done:     personal skills repo documented (gh-profiles, note, ask-notes), synced with origin/main
+- Done:     agentic architecture review of qa-automation-playwright (overview + layered revision)
+- Open:     healer overlap (healer skill vs auto-healer vs healme) and agents duplicated in .claude/.github - pick one source of truth
+- Open:     architecture review was shallow (dir listings + headers only); ai-router model IDs unverified
+- Not covered: no test runs or code changes were made in this session

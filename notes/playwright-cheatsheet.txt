@@ -1,0 +1,78 @@
+PLAYWRIGHT / NEOGOV QA CHEATSHEET  (personal, not in repo)
+Add entries with:  /note
+
+================================================================
+[2026-11-16] SETUP BASICS
+----------------------------------------------------------------
+- Setup script:  setup-environment.bat (npm install + playwright install + npm audit fix)
+- 1Password CLI installed via:  winget install --id AgileBits.1Password.CLI -e
+- Check 1Password works with:  op vault list   (op whoami says "not signed in" with desktop-app integration; ignore it)
+- Gotcha:  new PATH is not seen by already-open terminals; open a new one
+- Gotcha:  git pull blocked by local package-lock.json change -> git stash that file, pull, then checkout HEAD -- package-lock.json
+
+================================================================
+[2026-11-16] RUNNING TESTS
+----------------------------------------------------------------
+- Command:  TEST_ENV=qa POST_RESULT_TO_XRAY=false npx playwright test <spec> --project=Chrome --reporter=list
+- Always set POST_RESULT_TO_XRAY=false locally so nothing posts to Xray
+- Repo runs long tests detached with a bounded wait (see CLAUDE.md "Running Playwright")
+- Gotcha:  npx tsc --noEmit on the whole repo crashes with Node out-of-memory (exit 134), even with 8GB heap
+
+================================================================
+[2026-11-16] HOW EFORMS FIXTURE WORKS
+----------------------------------------------------------------
+- Spec imports test from tests/eforms/fixtures/eforms-fixture.ts (NOT @playwright/test)
+- Fixture:  eforms = new EFormsObjectFactory(page); factory holds all page objects
+- Usage:    async ({ page, eforms }) => eforms.dashboardPage.quickLinksHeading
+- Locators live in tests/eforms/pageobjectrepository/<area>/*.ts, written as .or() fallback chains
+- To add a POM: create class -> add to factory (property + new ...) -> use as eforms.<name>
+
+================================================================
+[2026-11-16] MY DEMO TEST
+----------------------------------------------------------------
+- Path:     tests/eforms/tests/ManjiriDemoTests/demo-dashboard-quicklinks.spec.ts
+- Folder is gitignored via  **/ManjiriDemoTests/  in .gitignore
+- Logs in as EFHRUser, checks Dashboard + Quick Links widget, logs out. Passed on QA (~1.9 min)
+
+================================================================
+[2026-11-16] EFORMS FIXTURE FLOW (DETAILED)
+----------------------------------------------------------------
+- Spec line:  import { test, expect } from "../../fixtures/eforms-fixture";   (NOT @playwright/test)
+- Test sig:   test("...", async ({ page, eforms }) => { ... })
+- Playwright matches the param name "eforms" to the fixture key of the same name
+
+  spec  async ({ page, eforms })
+    |  needs "eforms" -> looks in test = baseTest.extend<EFormsFixtureType>({...})
+    v
+  fixture  fixtures/eforms-fixture.ts  (line ~355)
+    eforms: async ({ page }, use) => {
+      const factory = new EFormsObjectFactory(page);   // setup, once per test
+      await use(factory);                              // test runs here
+    }                                                  // code after use() = teardown
+    |  fixture itself depends on built-in "page" (fresh page per test)
+    v
+  factory  class EFormsObjectFactory (same file)
+    constructor(page) { this.dashboardPage = new DashboardPage(page); ... dozens more }
+    v
+  POM  pageobjectrepository/dashboard/dashboard.page.ts
+    constructor(page) { this.quickLinksHeading = page.getByRole(...).or(...) }
+    v
+  spec uses:  eforms.dashboardPage.quickLinksHeading
+
+- Fixture file also imports "@lib/base.test" -> brings shared auto fixtures (data-isolation guard)
+- Add a new POM:  1) create class in pageobjectrepository/<area>/  2) add "public readonly x: X" + "this.x = new X(page)" in factory  3) use eforms.x in spec
+- Locator style: .or() fallback chain, order = aut-id attr, aria-label, role/text (min 2 strategies)
+
+================================================================
+[2026-11-18] VS CODE CLAUDE CODE PLUGIN ON AWS BEDROCK
+----------------------------------------------------------------
+- Path:     C:\Users\User\AppData\Roaming\Code\User\settings.json  (user-level, outside repo)
+- Added:    claudeCode.disableLoginPrompt=true, claudeCode.selectedModel, claudeCode.environmentVariables[]
+- Env vars: CLAUDE_CODE_USE_BEDROCK=1, AWS_PROFILE=Claude-Code-Bedrock-647088784885, AWS_REGION=us-east-1
+- Models:   ANTHROPIC_MODEL / ANTHROPIC_DEFAULT_SONNET_MODEL=global.anthropic.claude-sonnet-5-5, ANTHROPIC_DEFAULT_HAIKU_MODEL=global.anthropic.claude-haiku-5-5
+- Check:    aws sts get-caller-identity --profile Claude-Code-Bedrock-647088784885  (both profiles worked)
+- Check:    aws bedrock list-inference-profiles --region us-east-1  (confirmed both model ids exist for our role)
+- Use the SSO profile, not 647088784885_Claude-Code-Bedrock (static temp creds in ~/.aws/credentials expire)
+- CLI launcher start-claude.bat sets the same vars itself; left unchanged
+- Gotcha:   token/auth error later -> aws sso login --profile Claude-Code-Bedrock-647088784885, then reload window
+- Reload:   Ctrl+Shift+P -> Developer: Reload Window (extension reads env vars at startup)

@@ -26,7 +26,7 @@ Update later with `git -C ~/.claude/skills pull`.
 | Skill | Command | What it does |
 |---|---|---|
 | `gh-profiles` | `/gh-profiles` | Work + personal GitHub over SSH: generate keys, copy public keys to GitHub, auto-route commit identity per repo, clone/switch, audit, doctor. Needs Node 18+ and git 2.36+. |
-| `note` | `/note` | Appends findings from the current chat to a plain-text cheatsheet in `~/Documents/ClaudeNotes/`. |
+| `note` | `/note` | Appends findings from the current chat to a plain-text cheatsheet (`notes/playwright-cheatsheet.txt` in this repo). `/note sync` pulls, commits and pushes it so every device shares the same notes. |
 
 ## Notes
 

@@ -131,3 +131,39 @@ Add entries with:  /note
 - Path:     ~/Library/Application Support/aws-sso-menu/README.txt
 - Login item: ~/Library/LaunchAgents/com.manjiri.aws-sso-menu.plist
 - Gotcha:   static keys in ~/.aws/credentials override the SSO profile and are not refreshed by aws sso login.
+================================================================
+[2026-11-19] PLAYWRIGHT CAPABILITIES PROJECT - SETUP
+----------------------------------------------------------------
+- Path:     ~/Documents/Manjiri Workspace/playwright-capabilities (repo, remote via github-work alias)
+- Layout:   tests/ (15 specs 01..15 + auth.setup.ts), pages/ (POM classes), fixtures/controls.html, utils/ (env.ts, logger.ts)
+- Target:   eForms QA, baseURL from .env EF_BASE_URL (default https://eforms.qa.neogov.net); .env.example is the template
+- Install:  npm install   (devDeps: @playwright/test, dotenv, typescript, @types/node)
+- Run:      npm test | npm run test:chromium | npm run test:cross-browser | npm run report | npm run typecheck
+- Config:   playwright.config.ts - projects: setup -> chromium (depends on setup); firefox/webkit only run 11-multi-browser
+- Auth:     auth.setup.ts logs in once, saves .auth/user.json; other projects reuse it via storageState
+- Config:   timeout 60s, expect 15s, action 15s, nav 30s; screenshot/trace/video = only on failure; headless:false = visible browser
+- VSCode:   open the playwright-capabilities folder itself (not parent) so ext finds playwright.config.ts; ext = ms-playwright.playwright
+
+================================================================
+[2026-11-19] PLAYWRIGHT CHEATSHEET - CAPABILITIES 01-08
+----------------------------------------------------------------
+- 01 POM:        page classes in pages/ (LoginPage, EmployeesPage, AddEmployeePage) wrap locators + actions; specs stay readable. test.step() groups steps in report
+- 02 Locators:   prefer getByRole / getByLabel / getByPlaceholder; narrow with .filter({hasText}), .nth(i), .first(); innerText() to read
+- 03 Waits:      never fixed sleeps. waitForURL, waitForResponse, locator.waitFor, waitForFunction, expect.poll(fn), expect(fn).toPass() for retry blocks
+- 04 Screenshots: page.screenshot({path, fullPage}), locator.screenshot(); attach to report with testInfo.attach()
+- 05 Keyboard:   keyboard.press('Tab'|'Enter'|'Control+A'), keyboard.down/up for held keys, keyboard.type, locator.pressSequentially for char-by-char input
+- 06 Mouse:      hover, dblclick, click({button:'right'}), manual drag = mouse.move + mouse.down + mouse.move + mouse.up
+- 07 Forms:      fill() inputs, setChecked() for boxes, assert validation messages visible after bad submit
+- 08 Dropdowns:  native <select> -> selectOption(value|label|index); custom dropdowns -> click then getByRole('option')
+
+================================================================
+[2026-11-19] PLAYWRIGHT CHEATSHEET - CAPABILITIES 09-15
+----------------------------------------------------------------
+- 09 Check/radio: check()/uncheck() on getByRole('checkbox'|'radio') or getByLabel; assert with toBeChecked()
+- 10 Tables:     loc.allTextContents()/innerText per row; row.filter({hasText}); expect.poll for data that loads late; attach extracted data to report
+- 11 Multi-browser: same spec runs on chromium/firefox/webkit via projects; use browserName fixture to branch; run: npm run test:cross-browser
+- 12 Video:      test.use({ video: 'on' }) per spec (config default retain-on-failure); attach the video file to the report
+- 13 Trace:      context.tracing.start({screenshots,snapshots}) / group() / groupEnd() / stop({path}); view: npx playwright show-trace <zip>
+- 14 Errors:     try/catch around optional steps, locator.waitFor with fallback, toPass() retries, page.on('pageerror') to catch JS errors
+- 15 Logging:    page.on('console'|'pageerror'|'requestfinished'|'requestfailed') collected and attached; utils/logger.ts wraps steps + attach
+- Reports:       html reporter in playwright-report/ (open: npm run report); artifacts in test-results/

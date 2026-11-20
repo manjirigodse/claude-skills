@@ -121,3 +121,13 @@ Add entries with:  /note
 - Open:     healer overlap (healer skill vs auto-healer vs healme) and agents duplicated in .claude/.github - pick one source of truth
 - Open:     architecture review was shallow (dir listings + headers only); ai-router model IDs unverified
 - Not covered: no test runs or code changes were made in this session
+================================================================
+[2026-11-19] AWS SSO MENU BAR REFRESH
+----------------------------------------------------------------
+- Profile 647088784885_Claude-Code-Bedrock is SSO via session Claude_AWS_SSO. Do not store one-time keys in ~/.aws/credentials.
+- Command:  /usr/local/bin/aws sso login --profile 647088784885_Claude-Code-Bedrock
+- Menu:     top-right item "AWS 11h 42m". Click it, then "Refresh SSO credentials".
+- Path:     ~/Applications/AWS SSO Menu.app
+- Path:     ~/Library/Application Support/aws-sso-menu/README.txt
+- Login item: ~/Library/LaunchAgents/com.manjiri.aws-sso-menu.plist
+- Gotcha:   static keys in ~/.aws/credentials override the SSO profile and are not refreshed by aws sso login.
